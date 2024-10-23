@@ -1,0 +1,1683 @@
+---
+title: "abscessus"
+output: html_notebook
+---
+
+
+
+#Host status, subspecies distribution, sample source bar graph
+```{r}
+library(ggplot2)
+data <- data.frame(
+  Type = c("IPS","EPS","ENS"),
+  Count = c(2341, 312, 46)
+)
+
+data$Percentage <- data$Count / sum(data$Count) * 100
+data$Type = factor(data$Type, levels=c("IPS","EPS","ENS"))
+colors <- c("#182C4F","#3E8CAD", "#D0AD46")
+p <- ggplot(data, aes(x = Type, y = Percentage, fill = Type)) +
+  geom_bar(stat = "identity", color = "black",alpha =0.7,width = 0.7) +
+  geom_text(aes(label = sprintf("%.1f%%", Percentage)), vjust = -0.5,size = 10) +
+  scale_fill_manual(values = colors) +
+  scale_y_continuous(expand = c(0, 0),limits = c(0,95)) +
+  labs(x = "",
+       y = "Percentage") +
+  theme_classic() +
+  theme(#axis.text.x = element_text(size = 28,color="black"),
+        axis.text.x = element_blank(),
+        axis.text.y = element_text(size = 28,color="black"),
+        axis.title.x = element_text(size = 15,color="black"),
+        axis.title.y = element_text(size = 28,color="black"),
+        legend.position = "",
+        axis.line.x = element_line(color = "black", size = 1.2),  
+        axis.line.y = element_line(color = "black", size = 1.2),  
+        axis.ticks.length = unit(0.1, "cm"),  
+        axis.ticks = element_line(color = "black", size = 1.2),
+        panel.spacing.x = unit(0, "pt")) 
+  
+p
+#ggsave(paste("Source", format(Sys.time(), "%y-%m-%d"), ".pdf", sep = ""), plot=p, width=5, height=5)
+
+#Host status
+library(ggplot2)
+data <- data.frame(
+  Type = c("CF", "Non-CF"),
+  Count = c(1221, 353)
+)
+
+data$Percentage <- data$Count / sum(data$Count) * 100
+data$Type = factor(data$Type, levels=c("CF", "Non-CF"))
+colors <- c("#182C4F","#3E8CAD", "#D0AD46")
+p <- ggplot(data, aes(x = Type, y = Percentage, fill = Type)) +
+  geom_bar(stat = "identity", color = "black",alpha =0.7,width = 0.7) +
+  geom_text(aes(label = sprintf("%.1f%%", Percentage)), vjust = -0.5,size = 10) +
+  scale_fill_manual(values = colors) +
+  scale_y_continuous(expand = c(0, 0),limits = c(0,86)) +
+  labs(x = "",
+       y = "Percentage") +
+  theme_classic() +
+  theme(#axis.text.x = element_text(size = 28,color="black"),
+    axis.text.x = element_blank(),
+    axis.text.y = element_text(size = 28,color="black"),
+    axis.title.x = element_text(size = 15,color="black"),
+    axis.title.y = element_text(size = 28,color="black"),
+    legend.position = "",
+    axis.line.x = element_line(color = "black", size = 1.2),  
+    axis.line.y = element_line(color = "black", size = 1.2),  
+    axis.ticks.length = unit(0.1, "cm"), 
+    axis.ticks = element_line(color = "black", size = 1.2),
+    panel.spacing.x = unit(0, "pt")) 
+
+p
+#ggsave(paste("host", format(Sys.time(), "%y-%m-%d"), ".pdf", sep = ""), plot=p, width=3.8, height=5.3)
+
+#subspecies distribution
+library(ggplot2)
+data <- data.frame(
+  Type = c("ABS", "MAS", "BOL"),
+  Count = c(3799, 1726, 311)
+)
+# 计算百分比
+data$Percentage <- data$Count / sum(data$Count) * 100
+data$Type = factor(data$Type, levels=c("ABS", "MAS", "BOL"))
+colors <- c("#182C4F","#3E8CAD", "#D0AD46")
+p <- ggplot(data, aes(x = Type, y = Percentage, fill = Type)) +
+  geom_bar(stat = "identity", color = "black",alpha =0.7,width = 0.7) +
+  geom_text(aes(label = sprintf("%.1f%%", Percentage)), vjust = -0.5,size = 10) +
+  scale_fill_manual(values = colors) +
+  scale_y_continuous(expand = c(0, 0),limits = c(0,73)) +
+  labs(x = "",
+       y = "Percentage") +
+  theme_classic() +
+  theme(#axis.text.x = element_text(size = 28,color="black"),
+    axis.text.x = element_blank(),
+    axis.text.y = element_text(size = 28,color="black"),
+    axis.title.x = element_text(size = 15,color="black"),
+    axis.title.y = element_text(size = 28,color="black"),
+    legend.position = "",
+    axis.line.x = element_line(color = "black", size = 1.2),  
+    axis.line.y = element_line(color = "black", size = 1.2),  
+    axis.ticks.length = unit(0.1, "cm"),  
+    axis.ticks = element_line(color = "black", size = 1.2),
+    panel.spacing.x = unit(0, "pt")) 
+  
+
+p
+#ggsave(paste("Type", format(Sys.time(), "%y-%m-%d"), ".pdf", sep = ""), plot=p, width=5, height=5)
+```
+
+#Country distribution
+```{r}
+library(ggplot2)
+library(dplyr)
+read.csv("country_buble_R1.csv")->df
+df$Subtype = factor(df$Subtype, levels=c("60","59","58","57","56","55","54","53","51","50",
+                                         "49","48","47","46","45","44","43","42","41","40","39",
+                                         "38","37","35","34","33","32","31","30","29",
+                                         "28","27","26","25","24","23","22","21","20","19",
+                                         "18","17","16","15","14","13","12","11","10","9",
+                                         "8","7","6","5","4","3","2","1"))
+scatter_plot <- ggplot(df, aes(x = Country, y = Subtype, fill = Count)) +
+  geom_point(alpha = 0.9, shape = 21, stroke = 1,size =8) +
+  geom_blank(aes(y = "ECC")) +
+  theme_bw() +
+  scale_size_continuous(range = c(3, 9)) +
+  scale_fill_gradientn(colors = c("white","#0b5394",'#6fa8dc',	'#57AF90','#94CF8C',"#DEEA88",'#eb9e08',	'#e68200',	'#df6400',	'#d64100',	'#cc0000'),
+                       values = scales::rescale(c(0, 2,4,6, 15, 20, 25,30,35,40,45,50, max(df$Count))), 
+                       limits = c(0, max(df$Count)), 
+                       breaks = seq(0, max(df$Count), by = 20), 
+                       guide = "colorbar") +
+  scale_y_discrete(expand = c(0.02, 0.08)) +
+  theme(
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1.2),  
+    panel.grid.major = element_line(linetype = "dashed", linewidth = 1.1),  
+    panel.grid.minor = element_line(linetype = "dashed", linewidth = 1.1), 
+    axis.text.x = element_text(angle = 60, hjust = 1, size = 24, color = "black"),
+    axis.text.y = element_text(size = 22, color = "black"),
+    axis.title.x = element_blank(),
+    legend.position = "right",
+    legend.title = element_blank(),
+    legend.text = element_text(size = 24),
+    strip.text = element_text(size = 24),
+    axis.title.y = element_blank()) 
+
+scatter_plot
+
+#png( filename = "buble_country_2024_5.png",width = 9,height = 19,units = "in", bg = "white",res = 300)
+#scatter_plot
+#dev.off()
+```
+
+#Bar Chart
+```{r}
+library(ggplot2)
+library(ggridges)
+library(ggpubr)
+library(gcookbook)
+library(lemon)
+diamonds2 <- read.csv("all-selection_new.csv")
+a<- subset(diamonds2,diamonds2$Type == "DCC")
+diamonds2$GENE <- factor(diamonds2$GENE, levels = c("bisC", "crp", "der", "eis2", "embC", "erm(41)", 
+                                                    "espR", "gyrA", "ideR", "narK", "phoP", "phoR", 
+                                                    "pks16", "rplB", "tcyA", "ubiA", "yhfI", "MAB_0628", 
+                                                    "MAB_1013", "MAB_1068c", "MAB_1638", "MAB_1881c", 
+                                                    "MAB_2223", "MAB_2682c", "MAB_2885", "MAB_3312", 
+                                                    "MAB_4668c", "MAB_4695c", "MAB_4699c", "MAB_4714c"))
+a$GENE <- factor(a$GENE, levels = c("bisC", "crp", "der", "eis2", "embC", "erm(41)", 
+                                                    "espR", "gyrA", "ideR", "narK", "phoP", "phoR", 
+                                                    "pks16", "rplB", "tcyA", "ubiA", "yhfI", "MAB_0628", 
+                                                    "MAB_1013", "MAB_1068c", "MAB_1638", "MAB_1881c", 
+                                                    "MAB_2223", "MAB_2682c", "MAB_2885", "MAB_3312", 
+                                                    "MAB_4668c", "MAB_4695c", "MAB_4699c", "MAB_4714c"))
+a %>%
+  ggplot(aes(x = GENE, y = log)) +
+  geom_bar(stat = "identity",
+           show.legend = FALSE,
+           fill = "#ED7545",      # Background color
+           color = "white",
+           alpha =0.8) + 
+  #coord_flip() +
+  theme_minimal() +
+  scale_y_continuous(limits = c(-1.0,1.0),breaks = c(-1.0,-0.5,0,0.5,1.0)) +
+  theme(
+    axis.text.x = element_blank(),
+    axis.text.y = element_text(size = 27, color = "black"),
+    axis.title.x = element_text(size = 27, color = "black"),
+    axis.title.y = element_blank(),
+    axis.line.y = element_line(color = "black", size = 0.8),
+    axis.ticks.y = element_line(color = "black", size = 0.8),
+    legend.position = "",
+    panel.grid.major.y = element_blank()
+  ) +
+  coord_capped_cart(left='both') +
+  geom_hline(yintercept = 0, color = 1, lwd = 0.8) +
+  labs(y = 'pN/pS(log10)', x = "")  -> p
+p
+#ggsave(paste("DCC", format(Sys.time(), "%y-%m-%d"), ".pdf", sep = ""), plot=p, width=20, height=3.5)
+
+b<- subset(diamonds2,diamonds2$Type == "ECC")
+b$GENE <- factor(b$GENE, levels = c("bisC", "crp", "der", "eis2", "embC", "erm(41)", 
+                                    "espR", "gyrA", "ideR", "narK", "phoP", "phoR", 
+                                    "pks16", "rplB", "tcyA", "ubiA", "yhfI", "MAB_0628", 
+                                    "MAB_1013", "MAB_1068c", "MAB_1638", "MAB_1881c", 
+                                    "MAB_2223", "MAB_2682c", "MAB_2885", "MAB_3312", 
+                                    "MAB_4668c", "MAB_4695c", "MAB_4699c", "MAB_4714c"))
+b %>%
+  ggplot(aes(x = GENE, y = log)) +
+  geom_bar(stat = "identity",
+           show.legend = FALSE,
+           fill = "#1F4D85",      # Background color
+           color = "white",
+           alpha =0.8) + 
+  #coord_flip() +
+  theme_minimal() +
+  coord_capped_cart(left='both') +
+  scale_y_continuous(limits = c(-1.0,1.0),breaks = c(-1,-0.5,0,0.5,1.0)) +
+  theme(
+    axis.text.x = element_blank(),
+    axis.text.y = element_text(size = 27, color = "black"),
+    axis.title.x = element_text(size = 27, color = "black"),
+    axis.title.y = element_blank(),
+    axis.line.y = element_line(color = "black", size = 0.8),
+    axis.ticks.y = element_line(color = "black", size = 0.8),
+    legend.position = "",
+    panel.grid.major.y = element_blank()
+  ) +
+  geom_hline(yintercept = 0, color = 1, lwd = 0.8) +
+  labs(y = 'pN/pS(log10)', x = "") -> plot
+plot
+#ggsave(paste("ECC", format(Sys.time(), "%y-%m-%d"), ".pdf", sep = ""), plot=plot, width=20, height=3.5)
+
+c<- subset(diamonds2,diamonds2$Type == "LTS")
+c$GENE <- factor(c$GENE, levels = c("bisC", "crp", "der", "eis2", "embC", "erm(41)", 
+                                    "espR", "gyrA", "ideR", "narK", "phoP", "phoR", 
+                                    "pks16", "rplB", "tcyA", "ubiA", "yhfI", "MAB_0628", 
+                                    "MAB_1013", "MAB_1068c", "MAB_1638", "MAB_1881c", 
+                                    "MAB_2223", "MAB_2682c", "MAB_2885", "MAB_3312", 
+                                    "MAB_4668c", "MAB_4695c", "MAB_4699c", "MAB_4714c"))
+c %>%
+  ggplot(aes(x =GENE, y = log)) +
+  geom_bar(stat = "identity",
+           show.legend = FALSE,
+           fill = "#78A450",      # Background color
+           color = "white",
+           alpha =0.8) + 
+  #coord_flip() +
+  theme_minimal() +
+  scale_y_continuous(limits = c(-1.0,1.0),breaks = c(-1.0,-0.5,0,0.5,1.0)) +
+  theme(
+    axis.text.x = element_text(angle = 60, hjust = 1, size = 27, color = "black"),
+    axis.text.y = element_text(size = 27, color = "black"),
+    axis.title.x = element_text(size = 27, color = "black"),
+    axis.title.y = element_blank(),
+    legend.position = "",
+    axis.line.y = element_line(color = "black", size = 0.8),
+    axis.ticks.y = element_line(color = "black", size = 0.8),
+    panel.grid.major.y = element_blank()
+  ) +
+  coord_capped_cart(left='both') +
+  geom_hline(yintercept = 0, color = 1, lwd = 0.8) +
+  labs(y = 'pN/pS(log10)', x = "") -> plot
+plot
+#ggsave(paste("LTS", format(Sys.time(), "%y-%m-%d"), ".pdf", sep = ""), plot=plot, width=20, height=5.5)
+
+
+diamonds2 <- read.csv("all-selection.csv")
+
+library(ggplot2)
+library(gcookbook)
+library(lemon)
+p <- ggplot(diamonds2, aes(x = GENE, y = log)) +
+  geom_bar(stat = "identity",
+           show.legend = FALSE,
+           aes(fill = Type),      # Background color
+           color = "white",
+           alpha = 0.8) + 
+  theme_minimal() +
+  scale_y_continuous(limits = c(-1, 1), breaks = c(-1.0, -0.5, 0, 0.5, 1.0)) +
+  #coord_cartesian(ylim = c(-1, 1)) +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 20, color = "black"),
+    axis.text.y = element_text(size = 20, color = "black"),
+    axis.title.x = element_text(size = 20, color = "black"),
+    axis.title.y = element_blank(),
+    legend.position = "",
+    panel.grid.major.y = element_blank(),
+    axis.line.y = element_line(color = "black", size = 0.5),
+    axis.ticks.y = element_line(color = "black", size = 0.5),
+    panel.spacing = unit(2, "lines")
+  ) +
+  coord_capped_cart(left='both') +
+  geom_hline(yintercept = 0, color = "black", lwd = 0.4) +
+  labs(y = 'pN/pS(log10)', x = "") +
+  facet_grid(Type ~ ., scales = "free_y") +
+  scale_fill_manual(values = c("#ED7545","#1F4D85", "#78A450"))
+p
+
+```
+
+#phoR gene density distribution 
+```{r}
+library(ggplot2) 
+library(dplyr) 
+library(ggstatsplot) 
+library(ggridges)
+library(lubridate)
+library(ggthemes)
+#DCC-fix
+a <- read.csv("DCC-fix.csv")
+g=ggplot(data = a,aes(x = locate))+
+  theme_classic() + 
+  scale_x_continuous(limits=c(1, 500)) +
+  #scale_y_continuous(limits = c(0,0.011),breaks = c(seq(0,0.011,0.001)),sec.axis = sec_axis(~.*9000,name = "Cross-border events")) +
+  theme(axis.text.x = element_text(size = 24,color="black"),
+        axis.text.y = element_text(size = 24,color="black"),
+        axis.title.x = element_text(size = 24,color="black"),
+        axis.title.y = element_text(size = 24,color="black")) +
+  xlab(NULL) +
+  scale_fill_brewer() + 
+  ylab("Mutation density")+
+  geom_density(lwd = 1.2,
+               linetype = 1,color="#5e4390") 
+g
+#ggsave(paste("DCC-fix23-10-26",".pdf", sep = ""), plot=g, width=10, height=4)
+
+#DCC-unfix
+a <- read.csv("DCC-unfix.csv")
+g=ggplot(data = a,aes(x = locate))+
+  theme_classic() + #设置主题
+  scale_x_continuous(limits=c(1, 500)) +
+  #scale_y_continuous(limits = c(0,0.011),breaks = c(seq(0,0.011,0.001)),sec.axis = sec_axis(~.*9000,name = "Cross-border events")) +
+  theme(axis.text.x = element_text(size = 24,color="black"),
+        axis.text.y = element_text(size = 24,color="black"),
+        axis.title.x = element_text(size = 24,color="black"),
+        axis.title.y = element_text(size = 24,color="black")) +
+  xlab(NULL) +
+  scale_fill_brewer() + 
+  ylab("Mutation density")+
+  geom_density(lwd = 1.2,
+               linetype = 1,color="#5e4390") 
+g
+#ggsave(paste("DCC-unfix23-10-26",".pdf", sep = ""), plot=g, width=10, height=4)
+
+#EDCC-fix
+a <- read.csv("EDCC-fix.csv")
+g=ggplot(data = a,aes(x = locate))+
+  theme_classic() + 
+  scale_x_continuous(limits=c(1, 500)) +
+  #scale_y_continuous(limits = c(0,0.011),breaks = c(seq(0,0.011,0.001)),sec.axis = sec_axis(~.*9000,name = "Cross-border events")) +
+  theme(axis.text.x = element_text(size = 24,color="black"),
+        axis.text.y = element_text(size = 24,color="black"),
+        axis.title.x = element_text(size = 24,color="black"),
+        axis.title.y = element_text(size = 24,color="black")) +
+  xlab(NULL) +
+  scale_fill_brewer() + 
+  ylab("Mutation density")+
+  geom_density(lwd = 1.2,
+               linetype = 1,color="#5e4390") 
+g
+#ggsave(paste("EDCC-fix23-10-26",".pdf", sep = ""), plot=g, width=10, height=4)
+
+#EDCC-unfix
+a <- read.csv("EDCC-unfix.csv")
+g=ggplot(data = a,aes(x = locate))+
+  theme_classic() + 
+  scale_x_continuous(limits=c(1, 500)) +
+  #scale_y_continuous(limits = c(0,0.011),breaks = c(seq(0,0.011,0.001)),sec.axis = sec_axis(~.*9000,name = "Cross-border events")) +
+  theme(axis.text.x = element_text(size = 24,color="black"),
+        axis.text.y = element_text(size = 24,color="black"),
+        axis.title.x = element_text(size = 24,color="black"),
+        axis.title.y = element_text(size = 24,color="black")) +
+  xlab(NULL) +
+  scale_fill_brewer() + 
+  ylab("Mutation density")+
+  geom_density(lwd = 1.2,
+               linetype = 1,color="#5e4390") 
+g
+#ggsave(paste("EDCC-unfix23-10-26",".pdf", sep = ""), plot=g, width=10, height=4)
+```
+
+
+#TBL analysis
+```{r}
+library(ggplot2)
+library(dplyr)
+calculate_outliers <- function(x) {
+  mean_val <- mean(x)
+  std_dev <- sd(x)
+  outliers <- x[x < mean_val - 2 * std_dev | x > mean_val + 2 * std_dev]
+  return(outliers)
+}
+library(ggplot2)
+x_colors <- c("#ED7545","#1F4D85")  
+
+read.csv("TBL.csv")->df
+t.test(Median ~ Type, data = df) ->t_test_result
+t_test_result
+ggplot(df, aes(x = Type, y = Median, colour = Type,fill =Type)) + 
+  stat_boxplot(geom = "errorbar",width =0.25,linewidth =1,colour = "black") +
+  geom_boxplot(outlier.shape = NA,linewidth =1,colour = "black",alpha =1,fill ="white",width =0.5) +
+  geom_boxplot(outlier.shape = NA,linewidth =1,colour = "black",alpha =0.8,width =0.5) +
+  geom_jitter(size = 7,alpha =0.9,shape =21,colour = "black",stroke =0.2,width = 0.23) +
+  scale_color_manual(values = c("#ED7545","#1F4D85")) +
+  scale_fill_manual(values = c("#ED7545","#1F4D85")) + 
+  labs(x = NULL, y = "TBL") +  
+  theme_classic() +
+  coord_cartesian(ylim = c(NA, 8.3)) +
+  scale_y_continuous(breaks = scales::pretty_breaks(n = 4)) +
+  theme(axis.text.x = element_text(size = 40,color = "black"),
+        axis.text.y = element_text(size = 40, color = "black"),
+        axis.title.x = element_text(size = 40, color = "black"),
+        legend.position = "none",  
+        strip.text = element_text(size = 40),  
+        axis.title.y = element_text(size = 40, color = "black"),
+        axis.line = element_line(size = 0.6, colour = "black"),
+        axis.ticks = element_line(size = 0.6, colour = "black"),
+        axis.ticks.length = unit(0.3, "cm")) +
+  annotate("text", x = 1.5, y = 8.3, label = sprintf("P = %.3f", t_test_result$p.value), size = 14)->p
+p
+#png(filename = "two_TBL_density_2024_5.png",width = 8,height = 8,units = "in",bg = "white",res = 300)
+#p
+#dev.off()
+```
+#TBL(7 vs 7)
+```{r}
+library(ggplot2)
+library(dplyr)
+calculate_outliers <- function(x) {
+  mean_val <- mean(x)
+  std_dev <- sd(x)
+  outliers <- x[x < mean_val - 2 * std_dev | x > mean_val + 2 * std_dev]
+  return(outliers)
+}
+data <- read.csv("filter_TBL.csv")
+plot <- ggplot(data, aes(x =Subtype, y = TBL,colour = Type,fill =Type)) + 
+  stat_boxplot(geom = "errorbar",width =0.25,linewidth =0.8,colour = "black") +
+  geom_boxplot(outlier.shape = NA,linewidth =0.8,colour = "black",alpha =1,fill ="white") +
+  geom_boxplot(outlier.shape = NA,linewidth =0.8,colour = "black",alpha =0.8) +
+  geom_jitter(data = data[data$TBL %in% calculate_outliers(data$TBL), ], size = 1, alpha = 0.8, shape = 21, colour = "black", width = 0.2) +
+  scale_color_manual(values = c("#ED7545","#1F4D85")) +
+  scale_fill_manual(values = c("#ED7545","#1F4D85")) + 
+  labs(x = NULL, y = "TBL") +  # 添加标签
+  theme_classic() +
+  coord_cartesian(ylim = c(NA, 25)) +
+  #scale_fill_manual(values = c("DCC1" = "#a8d7ca", "DCC2"= "#a8d7ca", "DCC3"= "#a8d7ca", "DCC4"= "#a8d7ca","DCC5"= "#a8d7ca","DCC6"= "#a8d7ca","DCC7"= "#a8d7ca","ECC1" = "#6da8dc", "ECC2" = "#6da8dc", "ECC3" = "#6da8dc", "ECC4" = "#6da8dc","ECC5" = "#6da8dc","ECC6" = "#6da8dc","ECC7" = "#6da8dc")) +  
+  #scale_color_manual(values = c("DCC" = "#E56F5E", "ECC" = "#E56F5E")) +  
+  scale_y_continuous(expand = c(0, 3)) +
+  geom_hline(yintercept = 5, linetype = "dashed", color = "black", size = 1) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, size = 22,color = "black"),
+        axis.text.y = element_text(size = 22, color = "black"),
+        axis.title.x = element_text(size = 22, color = "black"),
+        legend.position = "none", 
+        strip.text = element_text(size = 22), 
+        axis.title.y = element_text(size = 22, color = "black"),
+        axis.line = element_line(size = 0.5, colour = "black"),
+        axis.ticks = element_line(size = 0.5, colour = "black"),
+        axis.ticks.length = unit(0.3, "cm")) 
+plot
+#png(filename = "filter_TBL24-4.png",width = 10,height = 6,units = "in",bg = "white",res = 300)
+#plot
+#dev.off()
+```
+#TBL(country)
+```{r}
+library(ggplot2)
+library(dplyr)
+read.csv("TBL_UK.csv")->df
+x_colors <- c("#ED7545","#1F4D85")  
+
+t.test(Median ~ Type, data = df) ->t_test_result
+t_test_result
+ggplot(df, aes(x = Type, y = Median, colour = Type,fill =Type)) + 
+  stat_boxplot(geom = "errorbar",width =0.25,linewidth =1,colour = "black") +
+  geom_boxplot(outlier.shape = NA,linewidth =1,colour = "black",alpha =1,fill ="white",width =0.5) +
+  geom_boxplot(outlier.shape = NA,linewidth =1,colour = "black",alpha =0.8,width =0.5) +
+  geom_jitter(size = 7,alpha =0.9,shape =21,colour = "black",stroke =0.2,width = 0.23) +
+  scale_color_manual(values = c("#ED7545","#1F4D85")) +
+  scale_fill_manual(values = c("#ED7545","#1F4D85")) + 
+  labs(x = NULL, y = "TBL") +  # 添加标签
+  theme_classic() +
+  coord_cartesian(ylim = c(NA, 8.5)) +
+  scale_y_continuous(breaks = scales::pretty_breaks(n = 4)) +
+  theme(axis.text.x = element_text(size = 40,color = "black"),
+        axis.text.y = element_text(size = 40, color = "black"),
+        axis.title.x = element_text(size = 40, color = "black"),
+        legend.position = "none",  
+        strip.text = element_text(size = 40), 
+        axis.title.y = element_text(size = 40, color = "black"),
+        axis.line = element_line(size = 1, colour = "black"),
+        axis.ticks = element_line(size = 1, colour = "black"),
+        axis.ticks.length = unit(0.3, "cm")) +
+  annotate("text", x = 1.5, y = 7.5, label = sprintf("P = %.3f", t_test_result$p.value), size = 14) +
+  annotate("text", x = 1.5, y = 8.5, label = sprintf("UK", t_test_result$p.value), size = 14)->p
+p
+
+library(ggplot2)
+read.csv("TBL_USA.csv")->df
+x_colors <- c("#ED7545","#1F4D85")  
+
+t.test(Median ~ Type, data = df) ->t_test_result
+t_test_result
+ggplot(df, aes(x = Type, y = Median, colour = Type,fill =Type)) + 
+  stat_boxplot(geom = "errorbar",width =0.25,linewidth =1,colour = "black") +
+  geom_boxplot(outlier.shape = NA,linewidth =1,colour = "black",alpha =1,fill ="white",width =0.5) +
+  geom_boxplot(outlier.shape = NA,linewidth =1,colour = "black",alpha =0.8,width =0.5) +
+  geom_jitter(size = 7,alpha =0.9,shape =21,colour = "black",stroke =0.2,width = 0.23) +
+  scale_color_manual(values = c("#ED7545","#1F4D85")) +
+  scale_fill_manual(values = c("#ED7545","#1F4D85")) + 
+  labs(x = NULL, y = "TBL") + 
+  theme_classic() +
+  coord_cartesian(ylim = c(NA, 9.5)) +
+  scale_y_continuous(breaks = scales::pretty_breaks(n = 4)) +
+  theme(axis.text.x = element_text(size = 40,color = "black"),
+        axis.text.y = element_text(size = 40, color = "black"),
+        axis.title.x = element_text(size = 40, color = "black"),
+        legend.position = "none",  
+        strip.text = element_text(size = 40),  
+        axis.title.y = element_text(size = 40, color = "black"),
+        axis.line = element_line(size = 1, colour = "black"),
+        axis.ticks = element_line(size = 1, colour = "black"),
+        axis.ticks.length = unit(0.3, "cm")) +
+  annotate("text", x = 1.5, y = 8.4, label = sprintf("P = %.3f", t_test_result$p.value), size = 14) +
+  annotate("text", x = 1.5, y = 9.5, label = sprintf("USA", t_test_result$p.value), size = 14)->p
+p
+
+#TBL-AS
+library(ggplot2)
+read.csv("TBL_AS.csv")->df
+
+t.test(Median ~ Type, data = df) ->t_test_result
+t_test_result
+ggplot(df, aes(x = Type, y = Median, colour = Type,fill =Type)) + 
+  stat_boxplot(geom = "errorbar",width =0.25,linewidth =1,colour = "black") +
+  geom_boxplot(outlier.shape = NA,linewidth =1,colour = "black",alpha =1,fill ="white",width =0.5) +
+  geom_boxplot(outlier.shape = NA,linewidth =1,colour = "black",alpha =0.8,width =0.5) +
+  geom_jitter(size = 7,alpha =0.9,shape =21,colour = "black",stroke =0.2,width = 0.23) +
+  scale_color_manual(values = c("#ED7545","#1F4D85")) +
+  scale_fill_manual(values = c("#ED7545","#1F4D85")) + 
+  labs(x = NULL, y = "TBL") +  
+  theme_classic() +
+  coord_cartesian(ylim = c(NA, 10.1)) +
+  scale_y_continuous(breaks = c(0,2,4,6,8)) +
+  theme(axis.text.x = element_text(size = 40,color = "black"),
+        axis.text.y = element_text(size = 40, color = "black"),
+        axis.title.x = element_text(size = 40, color = "black"),
+        legend.position = "none",  
+        strip.text = element_text(size = 40),  
+        axis.title.y = element_text(size = 40, color = "black"),
+        axis.line = element_line(size = 1, colour = "black"),
+        axis.ticks = element_line(size = 1, colour = "black"),
+        axis.ticks.length = unit(0.3, "cm")) +
+  annotate("text", x = 1.5, y = 9, label = sprintf("P = %.3f", t_test_result$p.value), size = 14) +
+  annotate("text", x = 1.5, y = 10.1, label = sprintf("Australia", t_test_result$p.value), size = 14)->p
+p
+
+
+
+#TBL-bryant
+library(ggplot2)
+read.csv("TBL_bryant.csv")->df
+
+t.test(Median ~ Type, data = df) ->t_test_result
+t_test_result
+ggplot(df, aes(x = Type, y = Median, colour = Type,fill =Type)) + 
+  stat_boxplot(geom = "errorbar",width =0.25,linewidth =1,colour = "black") +
+  geom_boxplot(outlier.shape = NA,linewidth =1,colour = "black",alpha =1,fill ="white",width =0.5) +
+  geom_boxplot(outlier.shape = NA,linewidth =1,colour = "black",alpha =0.8,width =0.5) +
+  geom_jitter(size = 7,alpha =0.9,shape =21,colour = "black",stroke =0.2,width = 0.23) +
+  scale_color_manual(values = c("#ED7545","#1F4D85")) +
+  scale_fill_manual(values = c("#ED7545","#1F4D85")) + 
+  labs(x = NULL, y = "TBL") +  
+  theme_classic() +
+  coord_cartesian(ylim = c(NA, 13)) +
+  scale_y_continuous(breaks = scales::pretty_breaks(n = 6)) +
+  theme(axis.text.x = element_text(size = 40,color = "black"),
+        axis.text.y = element_text(size = 40, color = "black"),
+        axis.title.x = element_text(size = 40, color = "black"),
+        legend.position = "none",  
+        strip.text = element_text(size = 40),  
+        axis.title.y = element_text(size = 40, color = "black"),
+        axis.line = element_line(size = 1, colour = "black"),
+        axis.ticks = element_line(size = 1, colour = "black"),
+        axis.ticks.length = unit(0.3, "cm")) +
+  annotate("text", x = 1.5, y = 11.5, label = sprintf("P = %.3f", t_test_result$p.value), size = 14) +
+  annotate("text", x = 1.5, y = 13, label = sprintf("Multicenter", t_test_result$p.value), size = 14)->p
+p
+#png( filename = "two_TBL_bryant.png",width = 8,height = 8,units = "in", bg = "white", res = 300) 
+#p
+#dev.off()
+```
+#TBL pre-processing steps
+```{r}
+data <- read.csv("UK_TBL.csv")
+boxplot_stats <- data %>%
+  group_by(Subtype) %>%
+  summarize(
+    Median = mean(TBL),
+    Q1 = quantile(TBL, 0.25),
+    Q3 = quantile(TBL, 0.75),
+    Upper = max(TBL),
+    Lower = min(TBL)
+  )
+write.csv(boxplot_stats,"TBL_UK.csv")
+```
+
+
+#TRL
+```{r}
+library(ggplot2)
+x_colors <- c("#ED7545","#1F4D85")  
+
+read.csv("TRL_filter.csv")->df
+t.test(Mean ~ Type, data = df) ->t_test_result
+t_test_result
+ggplot(df, aes(x = Type, y = Mean, colour = Type,fill =Type)) + 
+  stat_boxplot(geom = "errorbar",width =0.25,linewidth =1,colour = "black") +
+  geom_boxplot(outlier.shape = NA,linewidth =1,colour = "black",alpha =1,fill ="white",width =0.5) +
+  geom_boxplot(outlier.shape = NA,linewidth =1,colour = "black",alpha =0.8,width =0.5) +
+  geom_jitter(size = 5,alpha =0.9,shape =21,colour = "black",stroke =0.2,width = 0.23) +
+  scale_color_manual(values = c("#ED7545","#1F4D85")) +
+  scale_fill_manual(values = c("#ED7545","#1F4D85")) + 
+  labs(x = NULL, y = "TRL") +  
+  theme_classic() +
+  #coord_cartesian(ylim = c(NA, 12)) +
+  scale_y_continuous(breaks = scales::pretty_breaks(n = 4)) +
+  theme(axis.text.x = element_text(size = 28,color = "black"),
+        axis.text.y = element_text(size = 28, color = "black"),
+        axis.title.x = element_text(size = 28, color = "black"),
+        legend.position = "none",  
+        strip.text = element_text(size = 28),  
+        axis.title.y = element_text(size = 28, color = "black"),
+        axis.line = element_line(size = 1, colour = "black"),
+        axis.ticks = element_line(size = 1, colour = "black"),
+        axis.ticks.length = unit(0.3, "cm")) +
+  annotate("text", x = 1.5, y = 150, label = sprintf("P = %.3f", t_test_result$p.value), size = 10)->p
+p
+
+#png(filename = "two_TRL_new.png",width = 7,height = 7,units = "in",bg = "white",res = 300)
+#p
+#dev.off()
+```
+
+
+#Population size and time regression
+```{r}
+read.csv("TRL_filter.csv")->df
+library(ggplot2)
+library(ggpubr)
+library(ggExtra)
+fit <- lm(log ~ Year, df)
+
+coefficients <- coef(fit)
+intercept <- coefficients[1]
+slope <- coefficients[2]
+r_squared <- summary(fit)$r.squared
+p_value <- summary(fit)$coefficients[2, 4]
+
+scatter_plot <- ggplot(df, aes(x = Year, y = log, color =Type)) +
+  geom_point(size = df$log2*2.8,alpha =0.9,shape =21,color ="white",aes(fill =Type),stroke = 0.5) +
+  scale_fill_manual(values = c("#ED7545","#1F4D85")) + 
+  scale_color_manual(values = c("#ED7545","#1F4D85")) +
+  geom_smooth(method = "lm", se = TRUE, color = "black",linewidth = 1,linetype = "dashed",) +
+  labs(x = "Estimated Age (Year)", y = "Population Size(log10)") +
+  #scale_x_continuous(limits = c(1935,2025),breaks=c(seq(1900,2030, by=20))) +
+  theme_bw() +
+  theme(
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1.2),  
+    panel.grid.major = element_blank(),  
+    panel.grid.minor = element_blank(), 
+    axis.text.x = element_text(size = 28, color = "black"),
+    axis.text.y = element_text(size = 28, color = "black"),
+    axis.title.x = element_text(size = 28, color = "black"),
+    legend.position = "none",
+    strip.text = element_text(size = 28),
+    axis.title.y = element_text(size = 28, color = "black")) 
+
+p <- scatter_plot +
+  annotate("text", x = max(df$Year)-18, y = max(df$log) - 2.5, 
+           label = paste0("R² = ", round(r_squared, 2), ", p < 0.001 "),size = 10,color = "black") 
+a<- ggMarginal(p, type = "density", groupColour = F,groupFill = T, alpha =0.7,margins = "both", size = 3.5) 
+p
+
+#png(filename = "all.png",width = 8,height = 8,units = "in",bg = "white",res = 300)
+#p
+#dev.off()
+```
+
+```{r}
+read.csv("TRL_filter_maha.csv")->df
+
+library(ggplot2)
+library(ggpubr)
+library(ggExtra)
+fit <- lm(log ~ Year, df)
+
+coefficients <- coef(fit)
+intercept <- coefficients[1]
+slope <- coefficients[2]
+r_squared <- summary(fit)$r.squared
+p_value <- summary(fit)$coefficients[2, 4]
+
+scatter_plot <- ggplot(df, aes(x = Year, y = log,color =Type)) +
+  geom_point(size = df$log*6,alpha =0.9,shape =21,color ="white",aes(fill =Type),stroke = 0.5) +
+  scale_fill_manual(values = c("#ED7545","#1F4D85")) + 
+  scale_color_manual(values = c("#ED7545","#1F4D85")) +
+  geom_smooth(method = "lm", se = TRUE, color = "black",linewidth = 1,linetype = "dashed",) +
+  labs(x = "Estimated Age (Year)", y = "Population Size(log10)") +
+  #scale_x_continuous(limits = c(1935,2025),breaks=c(seq(1900,2030, by=20))) +
+  theme_bw() +
+  theme(
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1.2),  
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank(),  
+    axis.text.x = element_text(size = 40, color = "black"),
+    axis.text.y = element_text(size = 40, color = "black"),
+    axis.title.x = element_text(size = 40, color = "black"),
+    legend.position = "none",
+    strip.text = element_text(size = 40),
+    axis.title.y = element_text(size = 40, color = "black")) 
+
+scatter_plot
+
+p <- scatter_plot +
+  annotate("text", x = max(df$Year)-21, y = max(df$log) - 2.4, 
+           label = paste0("R² = ", round(r_squared, 2), ", p < 0.001 "),size = 12,color = "black") +
+  annotate("text", x = max(df$Year)-21, y = max(df$log) - 2.1, 
+           label = paste0("Different Mutation Rate"),size = 12,color = "black")
+
+
+
+read.csv("all_TRL_USA.csv")->df
+library(ggplot2)
+library(ggpubr)
+library(ggExtra)
+fit <- lm(log ~ Year, df)
+
+coefficients <- coef(fit)
+intercept <- coefficients[1]
+slope <- coefficients[2]
+r_squared <- summary(fit)$r.squared
+p_value <- summary(fit)$coefficients[2, 4]
+
+scatter_plot <- ggplot(df, aes(x = Year, y = log,color =Type)) +
+  geom_point(size = df$log*6,alpha =0.9,shape =21,color ="white",aes(fill =Type),stroke = 0.5) +
+  scale_fill_manual(values = c("#ED7545","#1F4D85")) + 
+  scale_color_manual(values = c("#ED7545","#1F4D85")) +
+  geom_smooth(method = "lm", se = TRUE, color = "black",linewidth = 1,linetype = "dashed",) +
+  labs(x = "Estimated Age (Year)", y = "Population Size(log10)") +
+  #scale_x_continuous(limits = c(1935,2025),breaks=c(seq(1900,2030, by=20))) +
+  theme_bw() +
+  theme(
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1.2),  
+    panel.grid.major = element_blank(),  
+    panel.grid.minor = element_blank(),  
+    axis.text.x = element_text(size = 40, color = "black"),
+    axis.text.y = element_text(size = 40, color = "black"),
+    axis.title.x = element_text(size = 40, color = "black"),
+    legend.position = "none",
+    strip.text = element_text(size = 40),
+    axis.title.y = element_text(size = 40, color = "black")) 
+
+scatter_plot
+
+p <- scatter_plot +
+  annotate("text", x = max(df$Year)-21, y = max(df$log) - 2.4, 
+           label = paste0("R² = ", round(r_squared, 2), ", p < 0.001 "),size = 12,color = "black") +
+  annotate("text", x = max(df$Year)-21, y = max(df$log) - 2.1, 
+           label = paste0("USA"),size = 12,color = "black")
+
+
+read.csv("all_TRL_UK.csv")->df
+library(ggplot2)
+library(ggpubr)
+library(ggExtra)
+fit <- lm(log ~ Year, df)
+
+coefficients <- coef(fit)
+intercept <- coefficients[1]
+slope <- coefficients[2]
+r_squared <- summary(fit)$r.squared
+p_value <- summary(fit)$coefficients[2, 4]
+
+scatter_plot <- ggplot(df, aes(x = Year, y = log,color =Type)) +
+  geom_point(size = df$log*6,alpha =0.9,shape =21,color ="white",aes(fill =Type),stroke = 0.5) +
+  scale_fill_manual(values = c("#ED7545","#1F4D85")) + 
+  scale_color_manual(values = c("#ED7545","#1F4D85")) +
+  geom_smooth(method = "lm", se = TRUE, color = "black",linewidth = 1,linetype = "dashed",) +
+  labs(x = "Estimated Age (Year)", y = "Population Size(log10)") +
+  #scale_x_continuous(limits = c(1935,2025),breaks=c(seq(1900,2030, by=20))) +
+  theme_bw() +
+  theme(
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1.2),  
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank(),  
+    axis.text.x = element_text(size = 40, color = "black"),
+    axis.text.y = element_text(size = 40, color = "black"),
+    axis.title.x = element_text(size = 40, color = "black"),
+    legend.position = "none",
+    strip.text = element_text(size = 40),
+    axis.title.y = element_text(size = 40, color = "black")) 
+
+scatter_plot
+
+p <- scatter_plot +
+  annotate("text", x = max(df$Year)-21, y = max(df$log) - 2.4, 
+           label = paste0("R² = ", round(r_squared, 2), ", p < 0.001 "),size = 12,color = "black") +
+  annotate("text", x = max(df$Year)-21, y = max(df$log) - 2.1, 
+           label = paste0("UK"),size = 12,color = "black")
+
+
+#AS
+read.csv("TRL_AS.csv")->df
+library(ggplot2)
+library(ggpubr)
+library(ggExtra)
+fit <- lm(log ~ Year, df)
+
+coefficients <- coef(fit)
+intercept <- coefficients[1]
+slope <- coefficients[2]
+r_squared <- summary(fit)$r.squared
+p_value <- summary(fit)$coefficients[2, 4]
+
+scatter_plot <- ggplot(df, aes(x = Year, y = log,color =Type)) +
+  geom_point(size = df$log*6,alpha =0.9,shape =21,color ="white",aes(fill =Type),stroke = 0.5) +
+  scale_fill_manual(values = c("#ED7545","#1F4D85")) + 
+  scale_color_manual(values = c("#ED7545","#1F4D85")) +
+  geom_smooth(method = "lm", se = TRUE, color = "black",linewidth = 1,linetype = "dashed",) +
+  labs(x = "Estimated Age (Year)", y = "Population Size(log10)") +
+  #scale_x_continuous(limits = c(1935,2025),breaks=c(seq(1900,2030, by=20))) +
+  theme_bw() +
+  theme(
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1.2),  
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank(),  
+    axis.text.x = element_text(size = 40, color = "black"),
+    axis.text.y = element_text(size = 40, color = "black"),
+    axis.title.x = element_text(size = 40, color = "black"),
+    legend.position = "none",
+    strip.text = element_text(size = 40),
+    axis.title.y = element_text(size = 40, color = "black")) 
+
+scatter_plot
+
+p <- scatter_plot +
+  annotate("text", x = max(df$Year)-21, y = max(df$log) - 2.4, 
+           label = paste0("R² = ", round(r_squared, 2), ", p < 0.001 "),size = 12,color = "black") +
+  annotate("text", x = max(df$Year)-21, y = max(df$log) - 2.1, 
+           label = paste0("Australia"),size = 12,color = "black")
+
+#bryant-TRl
+data <- read.csv("TRL_bryant.csv")
+boxplot_stats <- data %>%
+  group_by(Subtype) %>%
+  summarize(
+    Mean = mean(TRL),
+    MAX= max(TRL),
+    Q1 = quantile(TRL, 0.25),
+    Q3 = quantile(TRL, 0.75),
+    Upper = max(TRL),
+    Lower = min(TRL)
+  )
+write.csv(boxplot_stats,"bryant_TRL.csv")
+
+read.csv("bryant_TRL.csv")->df
+library(ggplot2)
+library(ggpubr)
+library(ggExtra)
+fit <- lm(log ~ Year, df)
+
+coefficients <- coef(fit)
+intercept <- coefficients[1]
+slope <- coefficients[2]
+r_squared <- summary(fit)$r.squared
+p_value <- summary(fit)$coefficients[2, 4]
+
+scatter_plot <- ggplot(df, aes(x = Year, y = log,color =Type)) +
+  geom_point(size = df$log*6,alpha =0.8,shape =21,color ="white",aes(fill =Type),stroke = 0.5) +
+  scale_fill_manual(values = c("#ED7545","#1F4D85")) + 
+  scale_color_manual(values = c("#ED7545","#1F4D85")) +
+  geom_smooth(method = "lm", se = TRUE, color = "black",linewidth = 1,linetype = "dashed",) +
+  labs(x = "Estimated Age (Year)", y = "Population Size(log10)") +
+  #scale_x_continuous(limits = c(1935,2025),breaks=c(seq(1900,2030, by=20))) +
+  theme_bw() +
+  theme(
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 1.2),  
+    panel.grid.major = element_blank(), 
+    panel.grid.minor = element_blank(),  
+    axis.text.x = element_text(size = 40, color = "black"),
+    axis.text.y = element_text(size = 40, color = "black"),
+    axis.title.x = element_text(size = 40, color = "black"),
+    legend.position = "none",
+    strip.text = element_text(size = 40),
+    axis.title.y = element_text(size = 40, color = "black")) 
+
+scatter_plot
+
+p <- scatter_plot +
+  annotate("text", x = max(df$Year)-45, y = max(df$log) - 2.7, 
+           label = paste0("R² = ", round(r_squared, 2), ", p < 0.001 "),size = 12,color = "black") +
+  annotate("text", x = max(df$Year)-45, y = max(df$log) - 2.5, 
+           label = paste0("Multicenter"),size = 12,color = "black")
+
+
+```
+
+
+
+
+# M.ABS pNS
+```{r}
+library(ggplot2)
+library(ggrepel)
+data <- read.csv("ABS-pns.csv")
+# 创建散点图
+p<-ggplot(data, aes(x = pNS, y = events, label = gene)) +
+  geom_point(aes(size = events), shape = ifelse(data$pNS > 10, 21, 1),
+             color = ifelse(data$pNS > 10, "#DB7575", "#87CEFA"),
+             fill = "white",stroke = 2) +
+  #geom_text_repel(data = subset(data, pNS > 10), size = 5,box.padding = 1,point.padding = 0.5,segment.colour = NA) +
+  labs(x = "pN/pS", y = "Normalized fixed mutation events") +
+  geom_vline(xintercept = 1, linetype = "dashed", color = "black") +
+  geom_label_repel(aes(label=gene),data = subset(data, pNS > 10),size = 7) +
+  scale_size_continuous(range = c(1, 15)) +
+  theme_classic() +
+  theme(axis.text.x = element_text(size = 30, color = "black"),
+        axis.text.y = element_text(size = 30, color = "black"),
+        axis.title.x = element_text(size = 30, color = "black"),
+        axis.title.y = element_text(size = 30, color = "black"),
+        panel.grid.minor.y = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.border = element_blank(),
+        axis.ticks.y = element_blank(),
+        legend.position = "none")
+p
+#ggsave(paste("ABS23-07-17",".pdf", sep = ""), plot=p, width=9.5, height=7)
+```
+# M.MAS pNS
+```{r}
+library(ggplot2)
+library(ggrepel)
+data <- read.csv("MAS-pns.csv")
+p<-ggplot(data, aes(x = pNS, y = events, label = gene)) +
+  geom_point(aes(size = events), shape = ifelse(data$pNS > 6, 21, 1),
+             color = ifelse(data$pNS > 6, "#DB7575", "#87CEFA"),
+             fill = "white",stroke = 1.5) +
+  #geom_text_repel(data = subset(data, pNS > 6), size = 5,box.padding = 1,point.padding = 0.5,segment.colour = NA) +
+  geom_label_repel(aes(label=gene),data = subset(data, pNS > 6),size = 7) +
+  labs(x = "pN/pS", y = "Normalized fixed mutation events") +
+  geom_vline(xintercept = 1, linetype = "dashed", color = "black") +
+  scale_size_continuous(range = c(1, 15)) +
+  theme_classic() +
+  theme(axis.text.x = element_text(size = 30, color = "black"),
+        axis.text.y = element_text(size = 30, color = "black"),
+        axis.title.x = element_text(size = 30, color = "black"),
+        axis.title.y = element_text(size = 30, color = "black"),
+        panel.grid.minor.y = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.border = element_blank(),
+        axis.ticks.y = element_blank(),
+        legend.position = "none")
+p
+#ggsave(paste("MAS23-07-17", ".pdf", sep = ""), plot=p, width=9.5, height=7)
+```
+# M.BOL pNS
+```{r}
+library(ggplot2)
+library(ggrepel)
+# 读取数据
+data <- read.csv("BOL-pns.csv")
+# 创建散点图
+p<-ggplot(data, aes(x = pNS, y = events, label = gene)) +
+  geom_point(aes(size = events), shape = ifelse(data$pNS > 3.5, 21, 1),
+             color = ifelse(data$pNS > 3.5, "#DB7575", "#87CEFA"),
+             fill = "white",stroke = 1.5) +
+  #geom_text_repel(data = subset(data, pNS > 6), size = 5,box.padding = 1,point.padding = 0.5,segment.colour = NA) +
+  geom_label_repel(aes(label=gene),data = subset(data, pNS > 3.5),size = 7) +
+  labs(x = "pN/pS", y = "Normalized fixed mutation events") +
+  geom_vline(xintercept = 1, linetype = "dashed", color = "black") +
+  scale_size_continuous(range = c(1, 15)) +
+  theme_classic() +
+  theme(axis.text.x = element_text(size = 30, color = "black"),
+        axis.text.y = element_text(size = 30, color = "black"),
+        axis.title.x = element_text(size = 30, color = "black"),
+        axis.title.y = element_text(size = 30, color = "black"),
+        panel.grid.minor.y = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.border = element_blank(),
+        axis.ticks.y = element_blank(),
+        legend.position = "none")
+p
+#ggsave(paste("BOL23-07-17",".pdf", sep = ""), plot=p, width=9.5, height=7)
+
+```
+
+
+#COG
+```{r}
+library(ggplot2)
+read.csv("cog.csv") -> df
+df$gene = factor(df$gene, levels=c('L','J','A','K','B','N','U','D','Y','V','O','T','M','Z','W','F','H','G','P','I','C','Q','E','R','S'))
+ggplot(df, aes(x = gene,y= count,fill = gene)) +
+  geom_bar(stat = "identity") +
+  labs(y = 'Number of genes') +
+  geom_vline(xintercept = 3.5,linetype="dashed") +
+  geom_vline(xintercept = 9.5,linetype="dashed") +
+  geom_vline(xintercept = 17.5,linetype="dashed") +
+  theme_classic() +
+  scale_y_continuous(expand = c(0,0))+
+  xlab(NULL)+
+  scale_fill_hue(labels = c("[L] Replication, recombination and repair", "[J] Translation, ribosomal structure and biogenesis", "[K] Transcription",
+                            "[U] Intracellular trafficking, secretion, and vesicular transport","[D] Cell cycle control, cell division, chromosome partitioning",
+                            "[V] Defense mechanisms","[O] Posttranslational modification, protein turnover, chaperones","[T] Signal transduction mechanisms",
+                            "[M] Cell wall/membrane/envelope biogenesis","[F] Nucleotide transport and metabolism","[H] Coenzyme transport and metabolism","[G] Carbohydrate transport and metabolism",
+                            "[P] Inorganic ion transport and metabolism","[I] Lipid transport and metabolism","[C] Energy production and conversion","[Q] Secondary metabolites biosynthesis, transport and catabolism",
+                            "[E] Amino acid transport and metabolism","[S] Function unknown")) +
+  theme(axis.text.x = element_text(size = 20,color="black"),
+        axis.text.y = element_text(size = 20,color="black"),
+        axis.title.x = element_text(size = 20,color="black"),
+        axis.title.y = element_text(size = 20,color="black"),
+        legend.title = element_text(size = 18),
+        legend.text = element_text(size = 18)) ->cog
+cog
+#ggsave(paste("cog", format(Sys.time(), "%y-%m-%d"), ".pdf", sep = ""), plot=cog, width=19, height=6)  
+```
+
+#migration
+```{r}
+if (!requireNamespace("BiocManager", quietly=TRUE))
+  install.packages("BiocManager")
+## BiocManager::install("BiocUpgrade") ## you may need this
+BiocManager::install("ggtree")
+require(ggplot2)
+require(ggtree)
+require(cowplot)
+require(scales)
+require(splitstackshape)
+require(reshape2)
+require(dplyr)
+require(viridis)
+require(tidytree)
+require(treeio)
+
+#function to generate image files
+exportPlot <- function(gplot, filename, width=2, height=1.5) {
+  ggsave(paste(filename,'.pdf',sep=""), gplot, width=width, height=height)
+  postscript(file=paste(filename,'.eps',sep=""), width=width, height=height)
+  print(gplot)
+  dev.off()
+  png(file=paste(filename,'.png', sep=""), width=width*100, height=height*100)
+  print(gplot)
+  dev.off()
+}
+
+#code to make axis pretty
+fancy_scientific <- function(l) {
+  # turn in to character string in scientific notation
+  l <- format(l, scientific = TRUE)
+  # remove the exponent for zero 
+  l <- gsub("0e\\+00","0",l)
+  # quote the part before the exponent to keep all the digits
+  l <- gsub("^(.*)e", "'\\1'e", l)
+  # remove + after exponent, if exists. E.g.: (3x10^+2 -> 3x10^2) 
+  l <- gsub("e\\+","e",l) 
+  # turn the 'e+' into plotmath format
+  l <- gsub("e", "%*%10^", l)
+  # return this as an expression
+  parse(text=l)
+}
+
+#scale factor
+scale_factor <- function(d, tmrca) {
+  sf <- tmrca/max(d$height_median, na.rm=TRUE)
+  return(sf)
+}
+#modify tree tip labs
+mod.tip.labs <- function(tree, d) {
+  tre_tips <- subset(d, isTip == TRUE, c(label, Geography))
+  tre_tips$samp <- sapply(strsplit(tre_tips$label, "_"), "[[", 1)
+  tre_tips$iso2 <- sapply(strsplit(tre_tips$label, "_"), "[[", 2)
+  tre_tips$lin <- sapply(strsplit(tre_tips$label, "_"), "[[", 4)
+  tre_tips$newName <- paste(tre_tips$samp, tre_tips$lin, tre_tips$iso2, tre_tips$Geography, sep="_")
+  tree@phylo$tip.label <- tre_tips$newName
+  return(tree)
+}
+
+#modify tree dat file
+mod.tree.dat <- function(d, sf){
+  #d$Geography.set.prob = gsub("\\{|\\}", "", d$Geography.set.prob)
+  #d$Geography.set = gsub("\\{|\\}", "", d$Geography.set)
+  #Extract parent node info
+  #d$parent_Geography <- d[match(d$parent, d$node), 'Geography']
+  #d$parent_Geography.prob <- d[match(d$parent, d$node), 'Geography.prob']
+  d$parent_height_median <- d[match(d$parent, d$node), 'height_median']
+  d$parent_posterior <- d[match(d$parent, d$node), 'posterior']
+  #modify node heights with scale factor
+  d.mod <- d
+  d.mod$height_median <- as.numeric(unlist(d.mod$height_median)) * sf
+  d.mod$parent_height_median <- as.numeric(unlist(d.mod$parent_height_median)) * sf
+  #determine if migration has occurred 
+  #d.mod$mig <- ifelse(d.mod$Geography != d.mod$parent_Geography, "Yes", "No")
+  #remove low confidence nodes
+  #d.mod <- subset(d.mod, d.mod$posterior >= 0.8 | is.na(d.mod$posterior))
+  #d.mod <- subset(d.mod, d.mod$parent_posterior >= 0.8)
+  return(d.mod)
+}
+#Convert mod tree data to migration data
+lin.mig.dat <- function(d.mod) {
+  rr <- range(d.mod[,c('height_median', 'parent_height_median')])
+  bb <- seq(floor(rr[1]),ceiling(rr[2]))
+  mm <- apply(d.mod[,c('parent_height_median', 'height_median')],1,function(x) bb %in% seq(floor(x['height_median']),ceiling(x["parent_height_median"])))
+  
+  cl <- apply(d.mod[,c('parent_height_median', 'height_median')],1,function(x) bb %in% seq(floor(x['height_median']),ceiling(x["parent_height_median"])))
+  l <- apply(cl,1,sum)
+  clun <- apply(d.mod[d.mod$mig == "Yes",c('parent_height_median', 'height_median')],1,function(x) bb %in% seq(floor(x['height_median']),ceiling(x["parent_height_median"])))
+  lun <- apply(clun,1,sum)
+  
+  gr <- apply(cl,1,function(x) length(unique((as.vector(as.matrix(d.mod[x,c('parent_Geography', 'Geography')]))))))
+  
+  d.mig <- cbind(data.frame(bb), data.frame(l), data.frame(lun), data.frame(gr))
+  
+  return(d.mig)
+}
+lin567.mig.dat <- function(d.mod) {
+  rr <- range(d.mod[,c('height_median', 'parent_height_median')])
+  bb <- seq(floor(rr[1]),ceiling(rr[2]))
+  mm <- apply(d.mod[,c('parent_height_median', 'height_median')],1,function(x) bb %in% seq(floor(x['height_median']),ceiling(x["parent_height_median"])))
+  
+  cl <- apply(d.mod[,c('parent_height_median', 'height_median')],1,function(x) bb %in% seq(floor(x['height_median']),ceiling(x["parent_height_median"])))
+  l <- apply(cl,1,sum)
+  #clun <- apply(d.mod[d.mod$mig == "Yes",c('parent_height_median', 'height_median')],1,function(x) bb %in% seq(floor(x['height_median']),ceiling(x["parent_height_median"])))
+  #lun <- apply(clun,1,sum)
+  
+  gr <- apply(cl,1,function(x) length(unique((as.vector(as.matrix(d.mod[x,c('parent_Geography', 'Geography')]))))))
+  
+  d.mig <- cbind(data.frame(bb), data.frame(l), data.frame(gr))
+  
+  return(d.mig)
+}
+#migration plot
+gen.mig.p <- function(d.mig) {
+  mig.p <- ggplot(d.mig[d.mig$l > 4,]) + 
+    geom_line(aes(bb, lun/l), colour = "black") + 
+    theme(legend.position = "none") + 
+    xlab("") + 
+    ylab("Migration Events") + 
+    scale_x_reverse(limits=c(2000, 25), 
+                    breaks=seq(50,500, by=50)) + 
+    #geom_hline(yintercept = 0.0, linetype="dotted") +
+    geom_ribbon(aes(x=bb, ymax=((lun/l) + 1/l), ymin=ifelse(((lun/l) - 1/l)<0, 0, ((lun/l) - 1/l))), alpha=.2) +
+    scale_fill_manual(values=c("gray")) + 
+    scale_y_continuous(limits=c(-0.25,.75), breaks = c(0, .25, .50)) +
+    theme_bw() +
+    theme(panel.grid.major.y = element_line(linetype="dotted", colour="grey"),
+          #panel.grid.major.x = element_blank(), 
+          panel.grid.minor = element_blank()) 
+  return(mig.p)
+}
+gen.full.mig.p <- function(d.mig) {
+  mig.p <- ggplot(d.mig[d.mig$l > 4,]) + 
+    geom_line(aes(bb, lun/l), colour = "black") + 
+    theme(legend.position = "none") + 
+    xlab("") + 
+    ylab("Migration Events") + 
+    scale_x_reverse(limits=c(max(d.mig[d.mig$l>4, 'bb']), 0), 
+                    breaks=seq(50,max(d.mig[d.mig$l>4, 'bb']), by=50)) + 
+    #geom_hline(yintercept = 0.0, linetype="dotted") +
+    geom_ribbon(aes(x=bb, ymax=((lun/l) + 1/l), ymin=((lun/l) - 1/l)), alpha=.2) +
+    scale_fill_manual(values=c("gray")) + 
+    scale_y_continuous(limits=c(-0.25,.75), breaks = c(0, .25, .50)) +
+    theme_bw() +
+    theme(panel.grid.major.y = element_line(linetype="dotted", colour="grey"),
+          #panel.grid.major.x = element_blank(), 
+          panel.grid.minor = element_blank()) #,
+  return(mig.p)
+} 
+#range expansion plot
+gen.gr.p <- function(d.mig) {
+  gr.p <- ggplot(d.mig[d.mig$l > 4,]) + 
+    geom_line(aes(bb, gr), colour = "black") + 
+    theme(legend.position = "none") + 
+    xlab("") + 
+    ylab("Regions") + 
+    scale_x_reverse(limits=c(2000, 25), 
+                    breaks=seq(50,500, by=50)) + 
+    scale_y_continuous(limits=c(0,16), breaks = c(4,8,12)) +
+    theme_bw() +
+    theme(panel.grid.major.y = element_line(linetype="dotted", colour="grey"),
+          #panel.grid.major.x = element_blank(), 
+          panel.grid.minor = element_blank()) 
+  return(gr.p)
+}
+gen.full.gr.p <- function(d.mig) {
+  gr.p <- ggplot(d.mig[d.mig$l > 4,]) + 
+    geom_line(aes(bb, gr), colour = "black") + 
+    theme(legend.position = "none") + 
+    xlab("") + 
+    ylab("Regions") + 
+    scale_x_reverse(limits=c(max(d.mig[d.mig$l>4, 'bb']), 0), 
+                    breaks=seq(50,max(d.mig[d.mig$l>4, 'bb']), by=50)) + 
+    scale_y_continuous(limits=c(0,16), breaks = c(4,8,12)) +
+    theme_bw() +
+    theme(panel.grid.major.y = element_line(linetype="dotted", colour="grey"),
+          #panel.grid.major.x = element_blank(), 
+          panel.grid.minor = element_blank()) 
+  return(gr.p)
+}
+#Make migration matrix
+make.mig.mat <- function(rates, bayes) {
+  names(rates) <- c('statistic', 'mean', 'stdErr', 'median', 'hpdLower', 'hpdUpper', 'ESS', '50hpdLower', '50hpdUpper')
+  geo.rates <- rates[grep("Geography.rates", rates$statistic),]
+  geo.rates$statistic <- as.character(geo.rates$statistic)
+  geo.rates$FROM <- sapply(strsplit(geo.rates$statistic, "[.]"), "[[", 3)
+  geo.rates$TO <- sapply(strsplit(geo.rates$statistic, "[.]"), "[[", 4)
+  
+  geo.rates$comb <- paste(geo.rates$FROM, geo.rates$TO, sep="-")
+  bayes$comb <- paste(bayes$FROM, bayes$TO, sep="-")
+  
+  rate.dat <- merge(geo.rates, bayes, by = "comb")
+  rate.dat$mean[rate.dat$BAYES_FACTOR <= 5] <- NA
+  rate.dat$median[rate.dat$BAYES_FACTOR <= 5] <- NA
+  
+  return(rate.dat)
+}
+#Migration Matrix Plot
+gen.mig.mat.p <- function(rates.comb){  
+  mig.mat.p <- ggplot(rates.comb, aes(x=TO.x, y=FROM.x, fill=median)) + 
+    geom_tile(colour="gray") +
+    scale_fill_viridis(na.value = "transparent") +
+    #xlab(NULL) + ylab(NULL) +
+    theme_bw(base_size=12) +
+    xlab("") +
+    ylab("") +
+    theme(panel.background = element_blank(),
+          panel.border = element_blank(),
+          axis.text.x = element_text(angle=45, hjust = 1),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank()
+    ) 
+  return(mig.mat.p)
+}
+#Pie Chart Tree
+gen.pie.tree <- function(tree, d, sf) {
+  #subset the tips
+  tre_tips <- subset(d, isTip == TRUE, c(label, Geography))
+  #split the tips by UN
+  tre_iso = split(tre_tips$label, tre_tips$Geography)
+  tre.g <- groupOTU(tree, tre_iso)
+  tre.g@phylo$edge.length <- tre.g@phylo$edge.length * sf
+  
+  t <- ggtree(tre.g, mrsd="2000-01-01", ladderize=FALSE) + geom_tiplab(aes(color=group)) + theme_tree2()
+  
+  d <- d[d$isTip == FALSE,]
+  d <- d[,c('node', 'Geography.set', 'Geography.set.prob', 'posterior')]
+  d <- d[d$posterior >= 0.8,] #remove nodes with posterior prob limit < 0.8 
+  
+  d$Geography.set.prob = gsub("\\{|\\}", "", d$Geography.set.prob)
+  d$Geography.set = gsub("\\{|\\}", "", d$Geography.set)
+  
+  dlong = cSplit(d, splitCols = c("Geography.set", "Geography.set.prob"), sep = c(",", ","), direction = "long")
+  dlong <- data.frame(dlong)
+  dlong <- dlong[,-4]
+  
+  d.wide = as.data.frame(dcast(dlong, node ~ Geography.set))
+  d.wide[is.na(d.wide)] <- 0
+  
+  pies <- nodepie(d.wide, cols=2:length(d.wide), alpha=.6)
+  tp <- inset(t, pies, width=0.05)
+  tp
+  return(tp)
+}
+
+#Make migration matrix
+make.mig.mat <- function(rates, bayes) {
+  names(rates) <- c('statistic', 'mean', 'stdErr', 'median', 'hpdLower', 'hpdUpper', 'ESS', '50hpdLower', '50hpdUpper')
+  geo.rates <- rates[grep("Geography.rates", rates$statistic),]
+  geo.rates$statistic <- as.character(geo.rates$statistic)
+  geo.rates$FROM <- sapply(strsplit(geo.rates$statistic, "[.]"), "[[", 3)
+  geo.rates$TO <- sapply(strsplit(geo.rates$statistic, "[.]"), "[[", 4)
+  
+  geo.rates$comb <- paste(geo.rates$FROM, geo.rates$TO, sep="-")
+  bayes$comb <- paste(bayes$FROM, bayes$TO, sep="-")
+  
+  rate.dat <- merge(geo.rates, bayes, by = "comb")
+  rate.dat$mean[rate.dat$BAYES_FACTOR <= 5] <- NA
+  rate.dat$median[rate.dat$BAYES_FACTOR <= 5] <- NA
+  
+  return(rate.dat)
+}
+
+#Migration Matrix Plot
+gen.mig.mat.p <- function(rates.comb){  
+  mig.mat.p <- ggplot(rates.comb, aes(x=TO.x, y=FROM.x, fill=median)) + 
+    geom_tile(colour="gray") +
+    scale_fill_viridis(na.value = "transparent") +
+    #xlab(NULL) + ylab(NULL) +
+    theme_bw(base_size=12) +
+    xlab("") +
+    ylab("") +
+    theme(panel.background = element_blank(),
+          panel.border = element_blank(),
+          axis.text.x = element_text(angle=45, hjust = 1),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank()
+    ) 
+  return(mig.mat.p)
+}
+
+#bsp
+gen.bsp.p <- function(d.bsp, sf, d.mig) {
+  #gt <- 62/(365/7) #62 weeks -> years
+  d.bsp.scaled <- d.bsp * sf
+  bsp.p <- ggplot(subset(d.bsp.scaled, d.bsp.scaled$Time <= max(d.mig[d.mig$l>4, 'bb']))) + 
+    #geom_line(aes(Time, Median/gt)) + 
+    geom_line(aes(Time, Median)) + 
+    #geom_ribbon(aes(x=Time, ymax=Upper/gt, ymin=Lower/gt), alpha=.2) + 
+    geom_ribbon(aes(x=Time, ymax=Upper, ymin=Lower), alpha=.1) + 
+    scale_color_manual(values = c("gray")) + 
+    scale_fill_manual(values = c("gray")) + 
+    xlab("") + 
+    ylab("Ne * Gen Time") + 
+    scale_x_reverse(limits=c(2000, 50), 
+                    breaks=seq(50,2000, by=50)) + 
+    scale_y_continuous(labels=fancy_scientific) +
+    theme_bw() +
+    theme(panel.grid.major.y = element_line(linetype="dotted", colour="grey"),
+          #panel.grid.major.x = element_blank(), 
+          panel.grid.minor = element_blank()#,
+          #axis.title.y = element_text(angle = 0)
+    )
+  return(bsp.p)
+}  
+gen.full.bsp.p <- function(d.bsp, sf, d.mig) {
+  #gt <- 62/(365/7) #62 weeks -> years
+  d.bsp.scaled <- d.bsp * sf
+  bsp.p <- ggplot(subset(d.bsp.scaled, d.bsp.scaled$Time <= max(d.mig[d.mig$l>4, 'bb']))) + 
+    #geom_line(aes(Time, Median/gt)) + 
+    geom_line(aes(Time, Median)) + 
+    #geom_ribbon(aes(x=Time, ymax=Upper/gt, ymin=Lower/gt), alpha=.2) + 
+    geom_ribbon(aes(x=Time, ymax=Upper, ymin=Lower), alpha=.2) + 
+    scale_color_manual(values = c("gray")) + 
+    scale_fill_manual(values = c("gray")) + 
+    xlab("") + 
+    ylab("Ne * Gen Time") + 
+    scale_x_reverse(limits=c(max(d.mig[d.mig$l>4, 'bb']), 0), 
+                    breaks=seq(50,max(d.mig[d.mig$l>4, 'bb']), by=50)) + 
+    scale_y_continuous(labels=fancy_scientific) +
+    theme_bw() +
+    theme(panel.grid.major.y = element_line(linetype="dotted", colour="grey"),
+          #panel.grid.major.x = element_blank(), 
+          panel.grid.minor = element_blank()#,
+          #axis.title.y = element_text(angle = 0)
+    )
+  return(bsp.p)
+}  
+
+#BSP plot (log scale)
+gen.bsp.log.p <- function(d.bsp, sf, d.mig) {
+  #gt <- 62/(365/7) #62 weeks -> years
+  d.bsp.scaled <- d.bsp * sf
+  bsp.log.p <- ggplot(subset(d.bsp.scaled, d.bsp.scaled$Time <= max(d.mig[d.mig$l>4, 'bb']))) + 
+    #geom_line(aes(Time, Median/gt)) + 
+    geom_line(aes(Time, Median)) + 
+    #geom_ribbon(aes(x=Time, ymax=Upper/gt, ymin=Lower/gt), alpha=.2) + 
+    geom_ribbon(aes(x=Time, ymax=Upper, ymin=Lower), alpha=.2) + 
+    scale_color_manual(values = c("gray")) + 
+    scale_fill_manual(values = c("gray")) + 
+    xlab("") + 
+    ylab("Ne * Gen Time") + 
+    scale_x_reverse(limits=c(2000, 50), 
+                    breaks=seq(50,2000, by=50)) + 
+    scale_y_continuous(trans = 'log10',
+                       limits = c(40, 300000),
+                       breaks = trans_breaks('log10', function(x) 10^x),
+                       labels = trans_format('log10', math_format(10^.x))) +
+    theme_bw() +
+    theme(panel.grid.major.y = element_line(linetype="dotted", colour="grey"),
+          #panel.grid.major.x = element_blank(), 
+          panel.grid.minor = element_blank()#,
+          #axis.title.y = element_text(angle = 0)
+    )
+  return(bsp.log.p)
+}
+gen.full.bsp.log.p <- function(d.bsp, sf, d.mig) {
+  #gt <- 62/(365/7) #62 weeks -> years
+  d.bsp.scaled <- d.bsp * sf
+  bsp.log.p <- ggplot(subset(d.bsp.scaled, d.bsp.scaled$Time <= max(d.mig[d.mig$l>4, 'bb']))) + 
+    #geom_line(aes(Time, Median/gt)) + 
+    geom_line(aes(Time, Median)) + 
+    #geom_ribbon(aes(x=Time, ymax=Upper/gt, ymin=Lower/gt), alpha=.2) + 
+    geom_ribbon(aes(x=Time, ymax=Upper, ymin=Lower), alpha=.2) + 
+    scale_color_manual(values = c("gray")) + 
+    scale_fill_manual(values = c("gray")) + 
+    xlab("") + 
+    ylab("Ne * Gen Time") +  
+    scale_x_reverse(limits=c(max(d.mig[d.mig$l>4, 'bb']), 0), 
+                    breaks=seq(50,max(d.mig[d.mig$l>4, 'bb']), by=50)) + 
+    scale_y_continuous(trans = 'log10',
+                       limits = c(40, 250000),
+                       breaks = trans_breaks('log10', function(x) 10^x),
+                       labels = trans_format('log10', math_format(10^.x))) +
+    theme_bw() +
+    theme(panel.grid.major.y = element_line(linetype="dotted", colour="grey"),
+          #panel.grid.major.x = element_blank(), 
+          panel.grid.minor = element_blank()#,
+          #axis.title.y = element_text(angle = 0)
+    )
+  return(bsp.log.p)
+}
+
+
+#Read in the MCC tree
+tree <- read.beast("data/OldWorld_GTR_G_BSP_DiscreteUN_MCC.tree")
+setwd("/Users/zcd111/Desktop/L23主要结果tree/所有结果重新画图汇总/跨洲事件统计/")
+#Group tree by lineages
+
+tree <- groupClade(tree, node=MRCA(tree, tree@phylo$tip.label[grep("L1", tree@phylo$tip.label)]), "L1")
+tree <- groupClade(tree, node=MRCA(tree, tree@phylo$tip.label[grep("L2", tree@phylo$tip.label)]), "L2")
+tree <- groupClade(tree, node=MRCA(tree, tree@phylo$tip.label[grep("L3", tree@phylo$tip.label)]), "L3")
+tree <- groupClade(tree, node=MRCA(tree, tree@phylo$tip.label[grep("L4", tree@phylo$tip.label)]), "L4")
+tree <- groupClade(tree, node=MRCA(tree, tree@phylo$tip.label[grep("L5", tree@phylo$tip.label)]), "L5")
+tree <- groupClade(tree, node=MRCA(tree, tree@phylo$tip.label[grep("L6", tree@phylo$tip.label)]), "L6")
+tree <- groupClade(tree, node=MRCA(tree, tree@phylo$tip.label[grep("L7", tree@phylo$tip.label)]), "L7")
+
+#Read full BSP data
+full.bsp <- read.table("data/OldWorld_GTR_G_BSP_DiscreteUN_BSP.csv", skip=1, header=T)
+
+#Convert tree data to dataframe
+full <- fortify(tree)
+
+#Modify the tip labels to include UN regions
+tree <- mod.tip.labs(tree, full)
+
+#Generate dataframe with updated tip labels
+full <- fortify(tree)
+
+#Define the scale factor based on the Mummy Mtb rate
+full.sf <-  1/(5e-8*(3838249/60787))
+
+#Make data readable
+full.mod <- mod.tree.dat(full, full.sf)
+
+#Drop Unkown samps
+full.mod <- subset(full.mod, full.mod$Geography != "Unknown")
+
+#Migration for the full tree
+full.mig <- lin.mig.dat(full.mod)
+
+#migration plots
+full.mig.p <- gen.full.mig.p(full.mig)
+full.gr.p <- gen.full.gr.p(full.mig)
+full.mig.p
+#bsp plots
+full.bsp.p <- gen.full.bsp.p(full.bsp,full.sf,full.mig)
+
+#bsp plots log scale
+full.bsp.log.p <- gen.full.bsp.log.p(full.bsp,full.sf,full.mig)
+
+#range exp plot
+full.gr.p <- gen.full.gr.p(full.mig)
+
+#Figure - Old World
+fig.full <- plot_grid(
+  full.bsp.log.p,
+  full.mig.p,
+  full.gr.p,
+  ncol=1,
+  align="v"
+)
+fig.full
+
+#save the figure
+#ggsave(paste("figs/bsp_mig_range/", format(Sys.time(), "%y-%m-%d_"), "full__bsp_mig_range.pdf", sep = ""), plot=fig.full, width=9, height=6.75)
+setwd("/Users/zhuchendi/Desktop/NTM进化分析/tree/脓肿/branch\ length/gubbins_all_BL/beast/")
+tree <- read.beast("ECC1.tree")
+full <- fortify(tree)
+full[,c(4,7)]-> x
+#full.sf <-  1/(4.6E-8*(3987032/9050))
+full.sf <- 1748/4978382
+full.sf <-  (2.4*(2.4/6.8))/7.7E-3
+full.mod <- mod.tree.dat(full, full.sf)
+full.mod <- subset(full.mod, full.mod$country != "Unknown")
+full.mig <- lin.mig.dat(full.mod)
+full.mig.p <- gen.full.mig.p(full.mig)
+full.gr.p <- gen.full.gr.p(full.mig)
+matrix(full) ->full
+write.csv(x,"L2.3.3.csv")
+full.sf
+#bspsf
+full.sf <-  2588/3987032
+full.bsp <- read.table("bsp.txt", skip=1, header=T)
+full.bsp.p <- gen.full.bsp.p(full.bsp,full.sf,full.mig)
+full.bsp.log.p <- gen.full.bsp.log.p(full.bsp,full.sf,full.mig)
+fig.full <- plot_grid(
+  full.mig.p,
+  full.gr.p,
+  ncol=1,
+  align="v"
+)
+fig.full
+full.bsp.log.p
+ggsave(paste("migration", format(Sys.time(), "%y-%m-%d"), ".pdf", sep = ""), plot=fig.full, width=9, height=6.75)
+write.table(unlist(a),"migrationrate.txt")
+
+15754/3987032
+#ECC3
+(289/4978382)*0.0115
+#ECC6
+(859/4978382)*5.42790E-03
+#ECC1
+(1748/4978382)*1.4474E-3
+#ECC2
+(971/4978382)*9.38E-3
+#ECC10
+(1383/4978382)*0.0158
+
+#DCC7
+(2660/4978382)*0.0158
+#DCC6
+(3528/4978382)*0.0158
+#DCC5
+(1857/4978382)*0.0158
+#DCC4
+(3009/4978382)*0.0158
+#DCC3-1
+(6013/4978382)*0.0158
+#DCC3-2
+(5051/4978382)*0.0158
+#DCC3-3
+(6395/4978382)*0.0158
+#DCC3-4
+(7778/4978382)*0.156
+#DCC3-5
+(4997/4978382)*0.0158
+
+#DCC2-1
+(4975/4978382)*0.0158
+#DCC2-2
+(4516/4978382)*0.0158
+#DCC2-3
+(5021/4978382)*0.0158
+#DCC2-4
+(4752/4978382)*0.156
+#DCC2-5
+(5495/4978382)*0.0158
+
+#DCC1-1
+(4404/4978382)*0.0158
+#DCC1-2
+(4516/4978382)*0.0158
+#DCC1-3
+(3943/4978382)*0.0158
+#DCC1-4
+(3483/4978382)*0.156
+#DCC1-5
+(3619/4978382)*0.0158
+
+
+
+
+
+
+6.8/2.4
+my.df <- data.frame(lapply(full.mod, as.character), stringsAsFactors=FALSE)
+write.csv(my.df,file ="L2.3.6.csv")
+
+
+
+setwd("/Users/zcd111/Desktop")
+tree <- read.beast("L2.3.5.tree")
+full <- fortify(tree)
+#full.sf <-  1/(4.6E-8*(3987032/9050))
+full.sf <- 311
+#full.sf <-  (2.4*(2.4/6.8))/7.7E-3
+full.mod <- mod.tree.dat(full, full.sf)
+
+
+setwd("/Users/zcd111/Desktop/NTM进化分析/tree/脓肿/branch\ length/gubbins_all_BL/beast")
+# TBL
+# 圆圈箱式图
+library(ggplot2)
+library(dplyr)
+data <- read.csv("BEAST2_migration.csv")
+# 绘制平均数分布图
+plot <- ggplot(data, aes(x = type, y = mean)) +
+  geom_errorbar(aes(ymin = min, ymax = max,color = type1), size = 2,  width = 0) +  # 绘制误差棒
+  geom_point(aes(color = type1, fill = type1), size = 1, shape = 21, stroke = 3) +  # 用于圆的中心
+  labs(x = NULL, y = "Inter-country migration rate (migrations per clade per year)") +  # 添加标签
+  theme_classic() +
+  coord_flip() +
+  scale_fill_manual(values = c("DCC" = "#ED7545", "ECC" = "#1F4D85")) +  # 设置点的边框颜色
+  #scale_fill_manual(values = c("DCC1" = "#a8d7ca", "DCC2"= "#a8d7ca", "DCC3"= "#a8d7ca", "DCC4"= "#a8d7ca","DCC5"= "#a8d7ca","DCC6"= "#a8d7ca","DCC7"= "#a8d7ca","ECC1" = "#6da8dc", "ECC2" = "#6da8dc", "ECC3" = "#6da8dc", "ECC4" = "#6da8dc","ECC5" = "#6da8dc","ECC6" = "#6da8dc","ECC7" = "#6da8dc")) +  # 设置点的填充颜色
+  scale_color_manual(values = c("DCC" = "#ED7545", "ECC" = "#1F4D85")) +  # 设置点的填充颜色
+  #scale_y_continuous(expand = c(0, 3)) +
+  #geom_hline(yintercept = 5, linetype = "dashed", color = "#999999", size = 1.5) +
+  theme(axis.text.x = element_text(size = 20,color = "black"),
+        axis.text.y = element_text(size = 20, color = "black"),
+        axis.title.x = element_text(size = 20, color = "black"),
+        legend.position = "none",  # 设置图例文字大小
+        strip.text = element_text(size = 20),  # 设置小标题大小
+        axis.title.y = element_text(size = 20, color = "black")) 
+
+plot
+png( 
+  filename = "beast_migration.png", # 文件名称
+  width = 9,           # 宽
+  height = 6,          # 高
+  units = "in",          # 单位
+  bg = "white",          # 背景颜色
+  res = 300)              # 分辨率
+plot
+dev.off()
+t.test(mean ~ type1, data = data) ->t_test_result
+t_test_result
+```
+
+#Dilution curve
+```{r}
+library(iNEXT)
+library(ape)
+library(ggplot2)
+library(grid)
+library(dplyr)
+#sample
+read.csv("MAB_clusters.csv")->data
+
+set.seed(123)
+sample_size <- 50
+
+for (i in 1:3) {
+  sample_indices <- sample(1:nrow(data), sample_size, replace = TRUE)
+  sampled_data <- data[sample_indices, ]
+  output_file_name <- paste0("subsample_ECC", i, ".csv")
+  write.csv(sampled_data, output_file_name, row.names = FALSE)
+  sample_size <- sample_size + 50
+}
+
+h1 <- list(
+  ECC1=c(3,3,3,3,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1),
+  ECC2=c(5,4,4,4,4,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+         1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1),
+  ECC3=c(7,7,6,5,5,5,4,4,4,4,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,
+         1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1))
+
+h2 <- as.list(h1)
+#h2[1:2] <- lapply(h2[1:2], as.numeric)
+
+out <- iNEXT(h2, q=0, datatype="abundance", endpoint= 200)
+g <- ggiNEXT(out, type=1)
+gb3 <- ggplot_build(g)
+
+gt3 <- ggplot_gtable(gb3) 
+
+grid.draw(gt3)
+
+
+g4 <- g + theme_bw()  + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+                                                                axis.text.x = element_text(angle = 45, hjust = 1, size = 24, color = "black"),
+                                                                axis.text.y = element_text(size = 24, color = "black"),
+                                                                axis.title.x = element_text(size = 24,color="black"),
+                                                                axis.title.y = element_text(size = 24,color="black"),
+                                                                legend.position = "") + ylab("Type Diversity") +xlab("Number of isolates")
+  #scale_fill_manual(values = c("#CC4524", "#2151C5","#3A845D")) +
+  #scale_color_manual(values = c("#CC4524", "#2151C5","#3A845D"))
+gb4 <- ggplot_build(g4) 
+gt4 <- ggplot_gtable(gb4)
+grid.draw(gt4)
+#ggsave(paste("gt424-6-11_ECC", ".pdf", sep = ""), plot=gt4, width=6, height=6)
+```
+
+#subsample
+```{r}
+read.csv("DCC1.csv")->data
+library(dplyr)
+set.seed(123)
+for (i in 1:5) {
+  sample_indices <- sample(1:nrow(data), 200, replace = TRUE)
+  sampled_data <- data[sample_indices, ]
+  output_file_name <- paste0("DCC1_subsample", i, ".csv")
+  write.csv(sampled_data, output_file_name, row.names = FALSE)
+}
+```
+
