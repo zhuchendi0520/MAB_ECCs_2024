@@ -1681,3 +1681,12 @@ for (i in 1:5) {
 }
 ```
 
+#ROC
+```{r}
+install.packages("pROC")
+library(pROC)
+data <- read.csv("roc.csv")
+roc_obj <- roc(data$true_label, data$similarity_score)
+plot(roc_obj)
+coords(roc_obj, "best", ret="threshold") 
+```
