@@ -5,11 +5,10 @@ from collections import defaultdict
 import os
 
 def load_cc_positions(cc_file):
-    """读取 CC 位点数据，并按 Subtype 分组"""
     cc_dict = defaultdict(set)
     try:
         with open(cc_file, 'r') as f:
-            next(f)  # 跳过标题行
+            next(f)  
             for line in f:
                 line = line.strip().split("\t")
                 if len(line) != 3:
@@ -25,7 +24,6 @@ def load_cc_positions(cc_file):
     return cc_dict
 
 def load_snp_file(snp_file):
-    """读取菌株 SNP 文件，提取第一列（SNP 位点）和第三列（变异碱基）"""
     snp_set = set()
     try:
         with open(snp_file, 'r') as f:
@@ -44,19 +42,18 @@ def load_snp_file(snp_file):
     return snp_set
 
 def calculate_similarity(snp_set, cc_dict):
-    """计算匹配度（位置和碱基）"""
     results = []
     for cc_name, cc_positions in cc_dict.items():
         if not cc_positions:
             continue
-        common_snps = snp_set & cc_positions  # 匹配位置和碱基
+        common_snps = snp_set & cc_positions  
         match_count = len(common_snps)
         total_count = len(cc_positions)
-        percentage = (match_count / total_count * 100) if total_count else 0  # 避免除零错误
+        percentage = (match_count / total_count * 100) if total_count else 0 
         results.append((cc_name, percentage, match_count, total_count))
 
     if not results:
-        return None  # 如果没有匹配结果，返回 None
+        return None 
 
     # 按匹配度排序（降序）
     results.sort(key=lambda x: x[1], reverse=True)
